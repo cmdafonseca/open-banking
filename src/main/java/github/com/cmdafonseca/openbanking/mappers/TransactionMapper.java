@@ -1,12 +1,11 @@
 package github.com.cmdafonseca.openbanking.mappers;
 
-import github.com.cmdafonseca.openbanking.dto.TransactionRequestDTO;
 import github.com.cmdafonseca.openbanking.dto.TransactionResponseDTO;
 import github.com.cmdafonseca.openbanking.entity.Transaction;
 
 public class TransactionMapper {
 
-  private TransactionMapper() {};
+  private TransactionMapper() {}
 
   public static TransactionResponseDTO toDTO(Transaction transaction) {
 
@@ -32,6 +31,10 @@ public class TransactionMapper {
       builder.type(transaction.getType().name());
     }
 
+    if(transaction.getDate() != null) {
+      builder.date(transaction.getDate());
+    }
+
     if (transaction.getMerchantData() == null) {
       builder.description("UNKNOWN");
     } else {
@@ -40,17 +43,10 @@ public class TransactionMapper {
       if (merchantName == null) {
         builder.description("UNKNOWN");
       } else if (merchantLogo != null) {
-        builder.description(merchantName + ", " + transaction.getDate());
+        builder.description(merchantName + ", " + merchantLogo);
       }
     }
       return builder.build();
-
   }
-
-  public static Transaction toEntity(TransactionRequestDTO dto) {
-    //TO DO
-    var builder = Transaction.builder();
-    return builder.build();
-  };
 
 }

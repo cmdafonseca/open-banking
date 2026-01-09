@@ -1,40 +1,43 @@
 package github.com.cmdafonseca.openbanking.service;
 
-import github.com.cmdafonseca.openbanking.entity.MerchantData;
-import github.com.cmdafonseca.openbanking.entity.Transaction;
+import github.com.cmdafonseca.openbanking.client.TransactionApiClient;
+import github.com.cmdafonseca.openbanking.merchant.MerchantDetailsRepository;
 import github.com.cmdafonseca.openbanking.repository.TransactionRepository;
 import github.com.cmdafonseca.openbanking.utils.TestUtils;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.IntStream;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class TransactionServiceTest {
 
-  @Autowired
-  TransactionRepository transactionRepository;
+  @MockitoBean
+  TransactionApiClient transactionApiClient;
+
+  @MockitoBean
+  MerchantDetailsRepository merchantRepo;
 
   @Autowired
   TransactionService transactionService;
 
+  private static final String ACCOUNT_NB = "37f37f92-f2d0-4e2d-92f0-17ff6589dec8";
+
   @BeforeEach
   void setUp() {
-    transactionRepository.deleteAll();
-    transactionRepository.saveAll(TestUtils.buildTransactions("37f37f92-f2d0-4e2d-92f0-17ff6589dec8"));
-    transactionRepository.saveAll(TestUtils.buildTransactions(UUID.randomUUID().toString()));
+    when(transactionApiClient.getAccountTransactions(ACCOUNT_NB))
+        .thenReturn(TestUtils.buildTransactions(ACCOUNT_NB));
+    when(merchantRepo.findLogoByMerchantName(any()))
+        .thenReturn("logo.png");
   }
-
-  private static final String ACCOUNT_NB = "37f37f92-f2d0-4e2d-92f0-17ff6589dec8";
 
   @Test
   void findAllByAccountNumber_shouldReturnThreeTransactions() {
