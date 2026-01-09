@@ -1,6 +1,5 @@
 package github.com.cmdafonseca.openbanking.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,7 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -30,7 +29,7 @@ public class Transaction {
   private UUID publicId;
   @Enumerated(EnumType.STRING)
   private Type type;
-  private LocalDateTime date;
+  private OffsetDateTime date;
   private String accountNumber;
   private String currency;
   private BigDecimal amount;
