@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id("org.openapi.generator") version "7.21.0"
 }
 
 group = 'github.com.cmdafonseca'
@@ -10,11 +11,11 @@ description = 'Basic mobile banking application'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
-configurations  {
+configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -27,25 +28,45 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'org.springframework.boot:spring-boot-h2console'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.25'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation platform('org.testcontainers:testcontainers-bom:1.20.4')
+	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+	implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.2.0'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-//	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'io.rest-assured:rest-assured:5.3.0'
 	testImplementation 'org.apache.groovy:groovy:4.0.15'
 	testImplementation 'org.apache.groovy:groovy-xml:4.0.15'
 	testImplementation 'io.rest-assured:json-schema-validator:5.3.0'
-	testImplementation "org.testcontainers:testcontainers-mysql:2.0.4"
 	testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
-	testImplementation "org.testcontainers:testcontainers-junit-jupiter:2.0.4"
+	testImplementation "org.testcontainers:mysql:1.20.4"
 
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+openApiGenerate {
+	generatorName.set("spring")
+	inputSpec.set("$rootDir/open-api/account-info-opeapi.yaml")
+	outputDir.set(layout.buildDirectory.dir("generated").get().asFile.path)
+	apiPackage.set("github.com.cmdafonseca.api")
+	invokerPackage.set("github.com.cmdafonseca.invoker")
+	modelPackage.set("github.com.cmdafonseca.model")
+	configOptions.put("dateLibrary", "java8")
+	configOptions.put( "basePackage", "github.com.cmdafonseca")
+	configOptions.put("interfaceOnly", "true")
+	generateApiDocumentation.set(false)
+	generateModelDocumentation.set(false)
+}
+
+sourceSets.main.java.srcDir(layout.buildDirectory.dir("generated/src/main/java"))
+
+compileJava.dependsOn tasks.openApiGenerate

@@ -1,7 +1,7 @@
 package github.com.cmdafonseca.openbanking.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class TransactionRequestDTO {
   private UUID id;
   private String type;
-  private LocalDateTime date;
+  private OffsetDateTime date;
   private UUID accountNumber;
   private String currency;
   private BigDecimal amount;
