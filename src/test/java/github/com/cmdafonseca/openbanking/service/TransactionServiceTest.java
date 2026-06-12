@@ -2,9 +2,7 @@ package github.com.cmdafonseca.openbanking.service;
 
 import github.com.cmdafonseca.openbanking.client.TransactionApiClient;
 import github.com.cmdafonseca.openbanking.merchant.MerchantDetailsRepository;
-import github.com.cmdafonseca.openbanking.repository.TransactionRepository;
 import github.com.cmdafonseca.openbanking.utils.TestUtils;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +27,14 @@ class TransactionServiceTest {
   @Autowired
   TransactionService transactionService;
 
+  TestUtils testUtils;
+
   private static final String ACCOUNT_NB = "37f37f92-f2d0-4e2d-92f0-17ff6589dec8";
 
   @BeforeEach
   void setUp() {
     when(transactionApiClient.getAccountTransactions(ACCOUNT_NB))
-        .thenReturn(TestUtils.buildTransactions(ACCOUNT_NB));
+        .thenReturn(testUtils.buildTransactions(ACCOUNT_NB));
     when(merchantRepo.findLogoByMerchantName(any()))
         .thenReturn("logo.png");
   }

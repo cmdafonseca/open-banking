@@ -27,6 +27,8 @@ class TransactionControllerIntegrationTest {
   @MockitoBean
   MerchantDetailsRepository merchantDetailsRepository;
 
+  TestUtils testUtils;
+
   @LocalServerPort
   private int port;
 
@@ -35,7 +37,7 @@ class TransactionControllerIntegrationTest {
   @BeforeEach
   void setUp() {
     when(transactionApiClient.getAccountTransactions(ACCOUNT_NB))
-        .thenReturn(TestUtils.buildTransactions(ACCOUNT_NB));
+        .thenReturn(testUtils.buildTransactions(ACCOUNT_NB));
     when(merchantDetailsRepository.findLogoByMerchantName(any()))
         .thenReturn("logo.png");
   }
