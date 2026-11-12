@@ -9,6 +9,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,7 @@ public class TransactionController {
   private final TransactionService transactionService;
 
   @GetMapping("/{accountNumber}")
+  @PreAuthorize("isAuthenticated()")
   public List<TransactionResponseDTO> getTransactions(@PathVariable final String accountNumber) {
       return transactionService.findAllByAccountNumber(accountNumber);
   }
